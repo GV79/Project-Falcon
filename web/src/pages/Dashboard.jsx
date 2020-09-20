@@ -21,10 +21,16 @@ const request = [
 ];
 
 export default function Dashboard() {
+  const [forms, setForms] = useState([]);
+
+  useEffect(() => {
+    setForms(request);
+  }, []);
+
   return (
     <Container>
       <AddForm />
-      {request.map((data) => (
+      {forms.map((data) => (
         <Card data={data} key={data.id} />
       ))}
     </Container>

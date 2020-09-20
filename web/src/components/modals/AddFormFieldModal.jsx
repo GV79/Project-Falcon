@@ -19,6 +19,7 @@ import {
 } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import MinusIcon from '@material-ui/icons/Remove';
+import { FORM_TYPE } from '../constants';
 
 // const useStyles = makeStyles(() => ({}));
 
@@ -58,9 +59,9 @@ export default function AddFormFieldModal() {
               <MenuItem value=''>
                 <em>None</em>
               </MenuItem>
-              <MenuItem value={'short-text'}>Short Text</MenuItem>
-              <MenuItem value={'multi-text'}>Long Text</MenuItem>
-              <MenuItem value={'multi-choice'}>Multiple Choice</MenuItem>
+              <MenuItem value={FORM_TYPE.SINGLE}>Short Text</MenuItem>
+              <MenuItem value={FORM_TYPE.LONG}>Long Text</MenuItem>
+              <MenuItem value={FORM_TYPE.MULTI}>Multiple Choice</MenuItem>
             </Select>
           </FormControl>
         </Grid>
@@ -70,30 +71,32 @@ export default function AddFormFieldModal() {
           </DialogContentText>
           <TextField label='Question' variant='outlined' style={{ margin: '0 0 0 auto', width: '75%' }} />
         </Grid>
-        <Grid container alignItems='center'>
-          <DialogContentText style={{ width: '20%', margin: 0 }}>
-            <strong>Options *</strong>
-          </DialogContentText>
-          <div style={{ display: 'flex', alignItems: 'center', marginLeft: 'auto', width: '75%' }}>
-            <TextField label='Outlined' variant='outlined' />
-            <Fab
-              color='primary'
-              aria-label='add'
-              size='small'
-              style={{ marginLeft: '1rem', borderRadius: 0, padding: '0 1rem' }}
-            >
-              <AddIcon />
-            </Fab>
-            <Fab
-              color='primary'
-              aria-label='subtract'
-              size='small'
-              style={{ marginLeft: '1rem', backgroundColor: '#CE3030', borderRadius: 0, padding: '0 1rem' }}
-            >
-              <MinusIcon />
-            </Fab>
-          </div>
-        </Grid>
+        {type === FORM_TYPE.MULTI && (
+          <Grid container alignItems='center'>
+            <DialogContentText style={{ width: '20%', margin: 0 }}>
+              <strong>Options *</strong>
+            </DialogContentText>
+            <div style={{ display: 'flex', alignItems: 'center', marginLeft: 'auto', width: '75%' }}>
+              <TextField label='Outlined' variant='outlined' />
+              <Fab
+                color='primary'
+                aria-label='add'
+                size='small'
+                style={{ marginLeft: '1rem', borderRadius: 0, padding: '0 1rem' }}
+              >
+                <AddIcon />
+              </Fab>
+              <Fab
+                color='primary'
+                aria-label='subtract'
+                size='small'
+                style={{ marginLeft: '1rem', backgroundColor: '#CE3030', borderRadius: 0, padding: '0 1rem' }}
+              >
+                <MinusIcon />
+              </Fab>
+            </div>
+          </Grid>
+        )}
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose} color='primary' autoFocus>
