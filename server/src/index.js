@@ -10,12 +10,10 @@ const allowedOrigins = ['http://localhost:3000'];
 dotenv.config();
 
 /* Importing routers */
-// const authRouter = require('./routes/auth-route');
-// const workoutRouter = require('./routes/workout-route');
-// const wgerRouter = require('./routes/wger-route');
+const userRouter = require('../routes/user-route');
 
-/* Middleware */
-app.use(helmet()); // best security HTTP configs
+/* General Middleware */
+app.use(helmet()); // HTTP security configs
 app.use(
   cors({
     origin: allowedOrigins,
@@ -26,7 +24,6 @@ app.use(
 app.use(express.json());
 app.use(compression());
 
-/* Establishing MongoDB connection and then starting up server */
 app.get('/', async (req, res) => {
   res.status(202).send('[GV79] Project Falcon Express.js API');
 });
