@@ -4,13 +4,21 @@
   "description": "Express.js API for Project Falcon",
   "main": "index.js",
   "scripts": {
+    "start": "nodemon src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "GV79",
   "license": "ISC",
   "dependencies": {
+    "compression": "^1.7.4",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "helmet": "^4.1.1",
     "knex": "^0.21.5",
     "objection": "^2.2.3"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
   }
 }
