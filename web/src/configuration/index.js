@@ -1,5 +1,5 @@
 const config = {
-  API_ENDPOINT: process.env.REACT_APP_ENDPOINT || 'http://localhost:3030',
+  API_ENDPOINT: process.env.NODE_ENV === 'development' ? 'http://localhost:3030' : 'https://someserver.com',
 };
 
 export default config;

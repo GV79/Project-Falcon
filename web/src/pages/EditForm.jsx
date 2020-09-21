@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import AddFormFieldModal from '../components/modals/AddFormFieldModal';
 import { Checkbox, FormControl, Grid, IconButton, Radio, TextareaAutosize, TextField } from '@material-ui/core';
@@ -12,22 +12,26 @@ import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import PublishIcon from '@material-ui/icons/Publish';
 import { FORM_TYPE, MODAL } from '../constants';
 import { Link, useHistory } from 'react-router-dom';
-import { getFormById } from '../http/restCalls';
+import { deleteFormById, getFormById, updateForm } from '../http/restCalls';
 import GenericLoader from '../components/loading/GenericLoader';
-// import debounce from 'lodash/debounce';
+import debounce from 'lodash/debounce';
+import SnackbarFactory from '../components/snackbar/SnackbarFactory';
 
 export default function EditForm() {
-  const history = useHistory();
   const dispatch = useDispatch();
   const form = useSelector(selectForm);
   const modalState = useSelector(selectModal);
+  const history = useHistory();
 
   const [loading, setLoading] = useState(true);
 
-  const [title, setTitle] = useState('Untitled form');
-  const [description, setDescription] = useState('');
-  const [status, setStatus] = useState(false);
-  const [uuid, setUuid] = useState(null);
+  const [showSavedAlert, setShowSavedAlert] = useState(false);
+  const [data, setData] = useState({
+    title: 'Untitled form',
+    description: '',
+    status: false,
+    uuid: null,
+  });
 
   useEffect(() => {
     const params = history.location.search;
@@ -35,22 +39,48 @@ export default function EditForm() {
 
     (async () => {
       const { data } = await getFormById(id);
-
-      setTitle(data.title);
-      setDescription(data.description);
-      setStatus(data.status);
-      setUuid(data.uuid);
+      setData(data);
       setLoading(false);
     })().catch((err) => {
       setLoading(false);
       console.log(err);
     });
-  });
+  }, [history.location.search]);
+
+  const debouncedFormUpdate = useCallback(
+    debounce(async (data, id) => {
+      await updateForm(data, id);
+      setShowSavedAlert(true);
+    }, 500),
+    []
+  );
+
+  const handleTitleChange = (value) => {
+    const newData = { ...data, title: value };
+    setData(newData);
+    debouncedFormUpdate(newData, data.uuid);
+  };
+
+  const handleDescriptionChange = (value) => {
+    const newData = { ...data, description: value };
+    setData(newData);
+    debouncedFormUpdate(newData, data.uuid);
+  };
+
+  const handleFormDeletion = async () => {
+    try {
+      await deleteFormById(data.uuid);
+      history.push('/');
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   const handleFieldDeletion = (id) => {
     dispatch(deleteField(id));
   };
 
+  /* Renders example depending on type of field */
   const renderField = (type) => {
     switch (type) {
       case FORM_TYPE.SINGLE:
@@ -60,6 +90,7 @@ export default function EditForm() {
             label='Outlined'
             variant='outlined'
             size='small'
+            disabled
             style={{ minWidth: '15rem', marginLeft: '1rem' }}
           />
         );
@@ -88,6 +119,7 @@ export default function EditForm() {
 
   return (
     <>
+      {showSavedAlert && <SnackbarFactory message='Changes have been saved' unmount={() => setShowSavedAlert(false)} />}
       {modalState === MODAL.ADD_FORM_FIELD && <AddFormFieldModal />}
       <Grid container justify='center'>
         {loading ? (
@@ -98,14 +130,14 @@ export default function EditForm() {
               <Grid container direction='column' justify='flex-start' style={{ flex: 1 }}>
                 <TextField
                   label='Form Title'
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  value={data.title}
+                  onChange={(e) => handleTitleChange(e.target.value)}
                   style={{ marginBottom: '0.5rem' }}
                 />
                 <TextField
                   label='Form Description'
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
+                  value={data.description}
+                  onChange={(e) => handleDescriptionChange(e.target.value)}
                 />
               </Grid>
               <Grid container direction='column' alignItems='flex-end' style={{ flex: 1 }}>
@@ -124,6 +156,7 @@ export default function EditForm() {
                     color='secondary'
                     startIcon={<DeleteIcon />}
                     style={{ backgroundColor: '#ce3030' }}
+                    onClick={handleFormDeletion}
                   >
                     Delete
                   </FormButton>
@@ -135,9 +168,9 @@ export default function EditForm() {
                     startIcon={<PublishIcon />}
                     style={{ backgroundColor: '#5470aa' }}
                   >
-                    {status ? 'Unpublish' : 'Publish'}
+                    {data.status ? 'Unpublish' : 'Publish'}
                   </FormButton>
-                  <Link to={`/view?id=${uuid}`} target='_blank' style={{ textDecoration: 'none' }}>
+                  <Link to={`/view?id=${data.uuid}`} target='_blank' style={{ textDecoration: 'none' }}>
                     <FormButton variant='contained' color='primary' startIcon={<SendIcon />}>
                       Share
                     </FormButton>

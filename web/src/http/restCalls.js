@@ -9,6 +9,14 @@ const createForm = async () => {
   }
 };
 
+const deleteFormById = async (id) => {
+  try {
+    return await axios.delete(config.API_ENDPOINT + `/api/forms/${id}`);
+  } catch (err) {
+    throw err;
+  }
+};
+
 const getFormById = async (id) => {
   try {
     return await axios.get(config.API_ENDPOINT + `/api/forms/${id}`);
@@ -25,4 +33,12 @@ const getForms = async () => {
   }
 };
 
-export { createForm, getFormById, getForms };
+const updateForm = async (data, id) => {
+  try {
+    return await axios.put(config.API_ENDPOINT + '/api/forms', { data, id });
+  } catch (err) {
+    throw err;
+  }
+};
+
+export { createForm, deleteFormById, getFormById, getForms, updateForm };

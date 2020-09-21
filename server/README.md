@@ -15,3 +15,7 @@ $\server npm install
 ```
 $\server npm start
 ```
+
+## Deployment
+
+Deployed to Heroku via 'git subtree push --prefix server heroku master' CLI command

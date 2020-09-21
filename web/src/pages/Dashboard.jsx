@@ -5,13 +5,23 @@ import AddForm from '../components/forms/AddForm';
 import { getForms } from '../http/restCalls';
 
 export default function Dashboard() {
-  const [forms, setForms] = useState([]);
+  const [forms, setForms] = useState([
+    {
+      id: 0,
+      uuid: 'test',
+      title: 'N/A',
+      description: '',
+    },
+  ]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
       const { data } = await getForms();
       setForms(data);
+      setLoading(false);
     })().catch((err) => {
+      setLoading(false);
       console.log(err);
     });
   }, []);
@@ -20,7 +30,7 @@ export default function Dashboard() {
     <Container>
       <AddForm />
       {forms.map((data) => (
-        <Card data={data} key={data.id} />
+        <Card data={data} loading={loading} key={data.id} />
       ))}
     </Container>
   );

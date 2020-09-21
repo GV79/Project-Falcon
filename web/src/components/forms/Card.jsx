@@ -10,8 +10,10 @@ import {
 } from './CardStyles';
 import LinkIcon from '@material-ui/icons/Link';
 import { useHistory } from 'react-router-dom';
+import { CircularProgress } from '@material-ui/core';
+import { Skeleton } from '@material-ui/lab';
 
-export default function Card({ data: { id, uuid, title = '', description, status, link } }) {
+export default function Card({ data: { uuid, title = '', description, status }, loading }) {
   const history = useHistory();
 
   const handleEdit = () => {
@@ -32,23 +34,34 @@ export default function Card({ data: { id, uuid, title = '', description, status
           alt='form placeholder'
           style={{ width: '100%', maxHeight: '15rem', position: 'absolute' }}
         />
-        <ImageBackdrop>
-          <strong>{title.toUpperCase()}</strong>
-        </ImageBackdrop>
+
+        <ImageBackdrop>{loading ? <CircularProgress /> : <strong>{title.toUpperCase()}</strong>}</ImageBackdrop>
       </ImageWrapper>
       <PropertiesWrapper>
-        <strong>Status:</strong>
-        <StatusText status={status}>{status ? 'Live' : 'Offline'}</StatusText>
-        {status && <LinkIcon style={{ cursor: 'pointer', marginLeft: 'auto' }} />}
+        {loading ? (
+          <Skeleton width='100%' />
+        ) : (
+          <>
+            <strong>Status:</strong>
+            <StatusText status={status}>{status ? 'Live' : 'Offline'}</StatusText>
+            {status && <LinkIcon style={{ cursor: 'pointer', marginLeft: 'auto' }} />}
+          </>
+        )}
       </PropertiesWrapper>
       <ActionsWrapper>
-        <CardButton variant='contained' color='primary' size='small' disabled={!status} onClick={handlePreview}>
+        <CardButton
+          variant='contained'
+          color='primary'
+          size='small'
+          disabled={!status || loading}
+          onClick={handlePreview}
+        >
           Preview
         </CardButton>
-        <CardButton variant='contained' color='primary' size='small' onClick={handleStatus}>
+        <CardButton variant='contained' color='primary' size='small' onClick={handleStatus} disabled={loading}>
           {status ? 'Unpublish' : 'Publish'}
         </CardButton>
-        <CardButton variant='contained' color='primary' size='small' onClick={handleEdit}>
+        <CardButton variant='contained' color='primary' size='small' onClick={handleEdit} disabled={loading}>
           Edit
         </CardButton>
       </ActionsWrapper>

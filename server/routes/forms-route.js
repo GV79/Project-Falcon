@@ -7,12 +7,10 @@ const Form = require('../models/Form');
 router
   .get('/', async (req, res) => {
     try {
-      console.log('woohooo');
       const forms = await Form.query();
-      console.log(forms);
       res.status(200).json(forms);
     } catch (err) {
-      console.log(`${req.method} - ${req.path}: ${err}`);
+      console.log(`[${req.method} - ${req.path}] Error: ${err}`);
       res.status(400).json({ message: err });
     }
   })
@@ -22,7 +20,17 @@ router
       const forms = await Form.query().where('uuid', id);
       res.status(200).json(forms[0]);
     } catch (err) {
-      console.log(`${req.method} - ${req.path}: ${err}`);
+      console.log(`[${req.method} - ${req.path}] Error: ${err}`);
+      res.status(400).json({ message: err });
+    }
+  })
+  .delete('/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      const what = await Form.query().delete().where('uuid', id);
+      res.status(200).send();
+    } catch (err) {
+      console.log(`[${req.method} - ${req.path}] Error: ${err}`);
       res.status(400).json({ message: err });
     }
   })
@@ -31,7 +39,7 @@ router
       /* Creating a form */
       const newId = uuidv4(); // for identifying forms and generating links
 
-      const form = await Form.query().insert({
+      await Form.query().insert({
         uuid: newId,
         title: 'Untitled form',
         description: '',
@@ -39,27 +47,19 @@ router
         fields: [],
       });
 
-      console.log(form);
-
       res.status(200).json({ uuid: newId });
     } catch (err) {
-      console.log(`${req.method} - ${req.path}: ${err}`);
+      console.log(`[${req.method} - ${req.path}] Error: ${err}`);
       res.status(400).json({ message: err });
     }
   })
-  .put('/', () => {
+  .put('/', async (req, res) => {
     try {
-      res.status(200).json({ routines: JSON.stringify(routines), selectedRoutine: userData.routine });
+      const { data, id } = req.body;
+      await Form.query().patch(data).where('uuid', id);
+      res.status(200).send();
     } catch (err) {
-      console.log(`${req.method} - ${req.path}: ${err}`);
-      res.status(400).json({ message: err });
-    }
-  })
-  .delete('/', () => {
-    try {
-      res.status(200).json({ routines: JSON.stringify(routines), selectedRoutine: userData.routine });
-    } catch (err) {
-      console.log(`${req.method} - ${req.path}: ${err}`);
+      console.log(`[${req.method} - ${req.path}] Error: ${err}`);
       res.status(400).json({ message: err });
     }
   });
