@@ -4,6 +4,7 @@ const router = express.Router();
 const { v4: uuidv4 } = require('uuid');
 const Form = require('../models/Form');
 
+/* Form Routes */
 router
   .get('/', async (req, res) => {
     try {
@@ -63,5 +64,17 @@ router
       res.status(400).json({ message: err });
     }
   });
+
+/* Form Fields Routes */
+router.put('/:id/fields', async (req, res) => {
+  try {
+    const { fields, id } = req.body;
+    const forms = await Form.query().patch({ fields }).where('uuid', id);
+    res.status(200).send();
+  } catch (err) {
+    console.log(`[${req.method} - ${req.path}] Error: ${err}`);
+    res.status(400).json({ message: err });
+  }
+});
 
 module.exports = router;

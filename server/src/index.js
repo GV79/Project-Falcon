@@ -4,7 +4,7 @@ const cors = require('cors');
 const compression = require('compression');
 
 const app = express();
-const port = 3030 || process.env.PORT;
+const port = 3030;
 const allowedOrigins = ['http://localhost:3000'];
 
 /* General Middleware */
@@ -49,6 +49,6 @@ app.get('/', async (req, res) => {
 });
 
 /* Starting server */
-app.listen(port, () => {
+app.listen(process.env.PORT || port, () => {
   console.log(`Starting server on localhost:${port}`);
 });
