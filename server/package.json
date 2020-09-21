@@ -4,8 +4,9 @@
   "description": "Express.js API for Project Falcon",
   "main": "index.js",
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "nodemon src/index.js",
+    "migrate": "knex migrate:latest",
+    "start": "npm run migrate && node src/index",
+    "dev": "npm run migrate && nodemon src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "GV79",
@@ -17,7 +18,9 @@
     "express": "^4.17.1",
     "helmet": "^4.1.1",
     "knex": "^0.21.5",
-    "objection": "^2.2.3"
+    "objection": "^2.2.3",
+    "pg": "^8.3.3",
+    "uuid": "^8.3.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.4"

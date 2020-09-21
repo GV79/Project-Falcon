@@ -1,22 +1,13 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
+import { AppBar, Button, IconButton, Toolbar } from '@material-ui/core';
 import QuestionAnswerIcon from '@material-ui/icons/QuestionAnswer';
-import { Button } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
+import { Title } from './HeaderStyles';
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-  },
   menuButton: {
     marginRight: theme.spacing(2),
-  },
-  title: {
-    flexGrow: 1,
   },
 }));
 
@@ -25,25 +16,23 @@ export default function Header() {
   const history = useHistory();
 
   return (
-    <div className={classes.root}>
-      <AppBar position='static'>
-        <Toolbar>
-          <IconButton
-            edge='start'
-            className={classes.menuButton}
-            color='inherit'
-            aria-label='menu'
-            onClick={() => history.push('/')}
-          >
-            <QuestionAnswerIcon />
-          </IconButton>
-          <Typography variant='h6' className={classes.title}>
-            Project Falcon Form Builder
-          </Typography>
-          <Button color='inherit'>Login</Button>
-          <Button color='inherit'>Sign up</Button>
-        </Toolbar>
-      </AppBar>
-    </div>
+    <AppBar position='static'>
+      <Toolbar>
+        <IconButton
+          edge='start'
+          className={classes.menuButton}
+          color='inherit'
+          aria-label='menu'
+          onClick={() => history.push('/')}
+        >
+          <QuestionAnswerIcon />
+        </IconButton>
+        <Title variant='h6'>Project Falcon Form Builder</Title>
+        <Button color='inherit' style={{ marginLeft: 'auto' }}>
+          Login
+        </Button>
+        <Button color='inherit'>Sign up</Button>
+      </Toolbar>
+    </AppBar>
   );
 }

@@ -2,15 +2,10 @@ const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
 const compression = require('compression');
-const dotenv = require('dotenv');
 
 const app = express();
 const port = 3030 || process.env.PORT;
 const allowedOrigins = ['http://localhost:3000'];
-dotenv.config();
-
-/* Importing routers */
-const userRouter = require('../routes/user-route');
 
 /* General Middleware */
 app.use(helmet()); // HTTP security configs
@@ -24,8 +19,33 @@ app.use(
 app.use(express.json());
 app.use(compression());
 
+/* Importing routers */
+const userRouter = require('../routes/user-route');
+const formRouter = require('../routes/forms-route');
+
+app.use('/api/users', userRouter);
+app.use('/api/forms', formRouter);
+
+/* Database Setup w/ knex */
+const { Model } = require('objection');
+const Knex = require('knex');
+require('dotenv').config();
+
+const knex = Knex({
+  client: 'postgresql',
+  useNullAsDefault: true,
+  connection: {
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE,
+  },
+});
+
+Model.knex(knex);
+
 app.get('/', async (req, res) => {
-  res.status(202).send('[GV79] Project Falcon Express.js API');
+  res.status(202).send('[GV79] Project Falcon Express.js API - Endpoints will be served from /api');
 });
 
 /* Starting server */

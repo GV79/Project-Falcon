@@ -1,0 +1,6 @@
+# Project Falcon
+
+General bare-bones form builder created using React.js, Redux Toolkit, Node.js (Express), PostgreSQL (w/ ElephantSQL hosting), and Object.js + Knex as an ORM solution.
+
+The frontend for this application is hosted here through x:
+The backend for this application is hosted here through y:
