@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { MODAL } from '../components/constants';
+import { MODAL } from '../constants';
 
 const initialState = MODAL.NONE;
 

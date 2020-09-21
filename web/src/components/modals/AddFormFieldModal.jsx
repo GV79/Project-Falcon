@@ -19,7 +19,7 @@ import {
 } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import MinusIcon from '@material-ui/icons/Remove';
-import { FORM_TYPE } from '../constants';
+import { FORM_TYPE } from '../../constants';
 import { addField } from '../../slices/formSlice';
 import { OptionsWrapper } from './AddFormFieldModalStyles';
 

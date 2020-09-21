@@ -1,7 +1,7 @@
 /* This Redux Toolkit slice is for preserving state for a given form currently being created/updated */
 
 import { createSlice } from '@reduxjs/toolkit';
-import { FORM_TYPE } from '../components/constants';
+import { FORM_TYPE } from '../constants';
 
 const initialState = {
   id: 0,

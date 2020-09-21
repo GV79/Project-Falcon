@@ -10,17 +10,19 @@ router
       console.log('woohooo');
       const forms = await Form.query();
       console.log(forms);
-      res.status(200).json({});
+      res.status(200).json(forms);
     } catch (err) {
+      console.log(`${req.method} - ${req.path}: ${err}`);
       res.status(400).json({ message: err });
     }
   })
   .get('/:id', async (req, res) => {
     try {
-      const { id } = request.body;
-      const forms = await Form.query().findById;
-      res.status(200).json({});
+      const { id } = req.params;
+      const forms = await Form.query().where('uuid', id);
+      res.status(200).json(forms[0]);
     } catch (err) {
+      console.log(`${req.method} - ${req.path}: ${err}`);
       res.status(400).json({ message: err });
     }
   })
@@ -41,6 +43,7 @@ router
 
       res.status(200).json({ uuid: newId });
     } catch (err) {
+      console.log(`${req.method} - ${req.path}: ${err}`);
       res.status(400).json({ message: err });
     }
   })
@@ -48,6 +51,7 @@ router
     try {
       res.status(200).json({ routines: JSON.stringify(routines), selectedRoutine: userData.routine });
     } catch (err) {
+      console.log(`${req.method} - ${req.path}: ${err}`);
       res.status(400).json({ message: err });
     }
   })
@@ -55,6 +59,7 @@ router
     try {
       res.status(200).json({ routines: JSON.stringify(routines), selectedRoutine: userData.routine });
     } catch (err) {
+      console.log(`${req.method} - ${req.path}: ${err}`);
       res.status(400).json({ message: err });
     }
   });

@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Header() {
+export default function Header({ authenticated }) {
   const classes = useStyles();
   const history = useHistory();
 
@@ -28,10 +28,20 @@ export default function Header() {
           <QuestionAnswerIcon />
         </IconButton>
         <Title variant='h6'>Project Falcon Form Builder</Title>
-        <Button color='inherit' style={{ marginLeft: 'auto' }}>
-          Login
-        </Button>
-        <Button color='inherit'>Sign up</Button>
+        {authenticated ? (
+          <>
+            <Button color='inherit' style={{ marginLeft: 'auto' }}>
+              Login
+            </Button>
+            <Button color='inherit'>Sign up</Button>
+          </>
+        ) : (
+          <>
+            <Button color='inherit' style={{ marginLeft: 'auto' }} onClick={() => history.push('/')}>
+              Back to dashboard
+            </Button>
+          </>
+        )}
       </Toolbar>
     </AppBar>
   );

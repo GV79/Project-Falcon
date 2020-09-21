@@ -9,8 +9,21 @@ import {
   StatusText,
 } from './CardStyles';
 import LinkIcon from '@material-ui/icons/Link';
+import { useHistory } from 'react-router-dom';
 
-export default function Card({ data: { id, title = '', description, status, link } }) {
+export default function Card({ data: { id, uuid, title = '', description, status, link } }) {
+  const history = useHistory();
+
+  const handleEdit = () => {
+    history.push(`/edit?id=${uuid}`);
+  };
+
+  const handlePreview = () => {
+    history.push(`/view?id=${uuid}`);
+  };
+
+  const handleStatus = () => {};
+
   return (
     <CardWrapper>
       <ImageWrapper>
@@ -29,13 +42,13 @@ export default function Card({ data: { id, title = '', description, status, link
         {status && <LinkIcon style={{ cursor: 'pointer', marginLeft: 'auto' }} />}
       </PropertiesWrapper>
       <ActionsWrapper>
-        <CardButton variant='contained' color='primary' size='small' disabled={!status}>
+        <CardButton variant='contained' color='primary' size='small' disabled={!status} onClick={handlePreview}>
           Preview
         </CardButton>
-        <CardButton variant='contained' color='primary' size='small'>
+        <CardButton variant='contained' color='primary' size='small' onClick={handleStatus}>
           {status ? 'Unpublish' : 'Publish'}
         </CardButton>
-        <CardButton variant='contained' color='primary' size='small'>
+        <CardButton variant='contained' color='primary' size='small' onClick={handleEdit}>
           Edit
         </CardButton>
       </ActionsWrapper>

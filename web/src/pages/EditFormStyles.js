@@ -1,5 +1,10 @@
-import { Grid } from '@material-ui/core';
+import { Button, Grid } from '@material-ui/core';
 import styled from 'styled-components';
+
+export const FormButton = styled(Button)`
+  width: 9rem;
+  margin: 0 0 1rem 1rem;
+`;
 
 export const Field = styled.div`
   display: flex;
