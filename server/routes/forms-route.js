@@ -100,20 +100,19 @@ router
   .get('/:id/status', async (req, res) => {
     try {
       const { id } = req.params;
-      const status = await Form.query().select('status').where('uuid', id);
-      console.log(status);
-      res.status(200).send({ status: status[0] });
+      const [status] = await Form.query().select('status').where('uuid', id);
+      res.status(200).send(status);
     } catch (err) {
       console.log(`[${req.method} - ${req.path}] Error: ${err}`);
       res.status(400).json({ message: err });
     }
   })
-  .post('/:id/status', async (req, res) => {
+  .put('/:id/status', async (req, res) => {
     try {
       const { id } = req.params;
       const { status } = req.body;
       await Form.query().patch({ status }).where('uuid', id);
-      res.status(200).send();
+      res.status(200).send({ status });
     } catch (err) {
       console.log(`[${req.method} - ${req.path}] Error: ${err}`);
       res.status(400).json({ message: err });

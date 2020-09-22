@@ -2,19 +2,20 @@ import React, { useEffect, useState } from 'react';
 import { Button, FormControl, Grid, TextareaAutosize, TextField } from '@material-ui/core';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
 import { useHistory } from 'react-router-dom';
-import { getFormById, submitResponse } from '../http/restCalls';
+import { getFormById, getFormStatus, submitResponse } from '../http/restCalls';
 import { FORM_TYPE } from '../constants';
 import Signature from '../components/forms/Signature';
 import { FieldWrapper, FieldLabel, HeaderWrapper, FormDescription, FormTitle } from './ViewFormStyles';
 import SuccessfulSubmit from '../components/success/SuccessfulSubmit';
 import MultipleChoice from '../components/forms/MultipleChoice';
+import GenericError from '../components/error/GenericError';
 
 export default function Viewform() {
-  '';
   const [data, setData] = useState([]);
   const [signature, setSignature] = useState(null);
   const [answers, setAnswers] = useState([]); // format { fieldId: x, answer: y }
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState(false);
   const history = useHistory();
 
   useEffect(() => {
@@ -22,13 +23,18 @@ export default function Viewform() {
     const id = params.split('=')[1];
 
     (async () => {
-      const { data } = await getFormById(id);
-      setData(data);
-      setAnswers(
-        data.fields.map((field) => {
-          return { id: field.id, type: field.type, label: field.label, answer: '' };
-        })
-      );
+      const { data: form } = await getFormStatus(id);
+      if (form.status) {
+        const { data } = await getFormById(id);
+        setData(data);
+        setAnswers(
+          data.fields.map((field) => {
+            return { id: field.id, type: field.type, label: field.label, answer: '' };
+          })
+        );
+      } else {
+        setError(true);
+      }
     })().catch((err) => {
       // setLoading(false);
       console.log(err);
@@ -38,7 +44,6 @@ export default function Viewform() {
   const handleSubmit = async (e) => {
     try {
       e.preventDefault();
-      console.log(answers);
       await submitResponse(data.uuid, { answers, signature });
       setSubmitted(true);
     } catch (err) {
@@ -100,7 +105,6 @@ export default function Viewform() {
           </FieldWrapper>
         );
       default:
-        console.log(field);
         return (
           <FormControl component='fieldset' style={{ marginBottom: '1rem' }} key={key}>
             <FieldLabel>{field.label}</FieldLabel>
@@ -120,24 +124,30 @@ export default function Viewform() {
       direction='column'
       style={{ padding: '3rem', flexWrap: 'nowrap' }}
     >
-      <HeaderWrapper container justify='center' alignItems='center' direction='column'>
-        <FormTitle>{data.title}</FormTitle>
-        <FormDescription>{data.description}</FormDescription>
-      </HeaderWrapper>
-      {submitted ? (
-        <SuccessfulSubmit />
+      {error ? (
+        <GenericError message='This form is no longer live' />
       ) : (
-        <form onSubmit={handleSubmit}>
-          <Grid container direction='column'>
-            {data?.fields?.map((field, index) => {
-              return renderFieldByType(field, index);
-            })}
-            <Signature setSignature={setSignature} />
-            <Button variant='contained' color='primary' startIcon={<ArrowUpwardIcon />} size='medium' type='submit'>
-              Submit Form
-            </Button>
-          </Grid>
-        </form>
+        <>
+          <HeaderWrapper container justify='center' alignItems='center' direction='column'>
+            <FormTitle>{data.title}</FormTitle>
+            <FormDescription>{data.description}</FormDescription>
+          </HeaderWrapper>
+          {submitted ? (
+            <SuccessfulSubmit />
+          ) : (
+            <form onSubmit={handleSubmit}>
+              <Grid container direction='column'>
+                {data?.fields?.map((field, index) => {
+                  return renderFieldByType(field, index);
+                })}
+                <Signature setSignature={setSignature} />
+                <Button variant='contained' color='primary' startIcon={<ArrowUpwardIcon />} size='medium' type='submit'>
+                  Submit Form
+                </Button>
+              </Grid>
+            </form>
+          )}
+        </>
       )}
     </Grid>
   );

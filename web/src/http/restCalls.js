@@ -50,6 +50,14 @@ const getForms = async () => {
   }
 };
 
+const getFormStatus = async (uuid) => {
+  try {
+    return await axios.get(config.API_ENDPOINT + `/forms/${uuid}/status`);
+  } catch (err) {
+    throw err;
+  }
+};
+
 const getResponses = async (id) => {
   try {
     return await axios.get(config.API_ENDPOINT + `/responses/${id}`);
@@ -90,6 +98,7 @@ export {
   deleteFormById,
   getFormById,
   getForms,
+  getFormStatus,
   getResponses,
   submitResponse,
   updateForm,

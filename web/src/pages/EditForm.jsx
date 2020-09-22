@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import AddFormFieldModal from '../components/modals/AddFormFieldModal';
 import { Checkbox, FormControl, Grid, IconButton, Radio, TextareaAutosize, TextField } from '@material-ui/core';
-import { Field, FormButton, PropertiesGrid } from './EditFormStyles';
+import { Circle, Field, FormButton, PropertiesGrid, RingRing } from './EditFormStyles';
 import { selectModal, showAddFormFieldModal } from '../slices/modalSlice';
 import { selectForm, deleteField, updateFormProperties } from '../slices/formSlice';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -13,7 +13,7 @@ import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import PublishIcon from '@material-ui/icons/Publish';
 import { FORM_TYPE, MODAL } from '../constants';
 import { Link, useHistory } from 'react-router-dom';
-import { deleteFieldById, deleteFormById, getFormById, updateForm } from '../http/restCalls';
+import { deleteFieldById, deleteFormById, getFormById, updateForm, updateFormStatus } from '../http/restCalls';
 import GenericLoader from '../components/loading/GenericLoader';
 import debounce from 'lodash/debounce';
 import SnackbarFactory from '../components/snackbar/SnackbarFactory';
@@ -123,6 +123,17 @@ export default function EditForm() {
     }
   };
 
+  const handleStatus = async () => {
+    try {
+      await updateFormStatus(data.uuid, !data.status);
+      const newData = { ...data, status: !data.status };
+      dispatch(updateFormProperties(newData));
+      setShowSavedAlert(true);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <>
       {showSavedAlert && <SnackbarFactory message='Changes have been saved' unmount={() => setShowSavedAlert(false)} />}
@@ -149,6 +160,22 @@ export default function EditForm() {
                   value={data.description}
                   onChange={(e) => handleDescriptionChange(e.target.value)}
                 />
+                <Grid container alignItems='center'>
+                  <p style={{ color: '#555' }}>
+                    <strong>
+                      Status:{' '}
+                      <span style={{ color: data.status ? 'green' : '#ce3030', marginLeft: '0.3rem' }}>
+                        {data.status ? 'Live' : 'Offline'}
+                      </span>
+                    </strong>
+                  </p>
+                  <div
+                    style={{ display: 'flex', flexDirection: 'colum', justifyContent: 'center', marginLeft: '1rem' }}
+                  >
+                    <RingRing status={data.status} />
+                    <Circle status={data.status} />
+                  </div>
+                </Grid>
               </Grid>
               <Grid container direction='column' alignItems='flex-end' style={{ flex: 1 }}>
                 <Grid container justify='flex-end'>
@@ -177,11 +204,16 @@ export default function EditForm() {
                     color='primary'
                     startIcon={<PublishIcon />}
                     style={{ backgroundColor: '#5470aa' }}
+                    onClick={handleStatus}
                   >
                     {data.status ? 'Unpublish' : 'Publish'}
                   </FormButton>
-                  <Link to={`/view?id=${data.uuid}`} target='_blank' style={{ textDecoration: 'none' }}>
-                    <FormButton variant='contained' color='primary' startIcon={<SendIcon />}>
+                  <Link
+                    to={`/view?id=${data.uuid}`}
+                    target='_blank'
+                    style={{ textDecoration: 'none', pointerEvents: !data.status ? 'none' : 'auto' }}
+                  >
+                    <FormButton variant='contained' color='primary' startIcon={<SendIcon />} disabled={!data.status}>
                       Share
                     </FormButton>
                   </Link>
