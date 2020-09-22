@@ -3,6 +3,32 @@ import { Accordion, AccordionDetails, AccordionSummary, Grid, Typography } from 
 import { useHistory } from 'react-router-dom';
 import { getResponses } from '../http/restCalls';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import styled from 'styled-components';
+
+const ResponsesWrapper = styled(Grid)`
+  padding: 2rem;
+  text-align: center;
+  background-color: #e8e8e8;
+`;
+
+const Title = styled.h1`
+  color: #555;
+`;
+
+const ResponseFieldAnswer = styled.p`
+  color: #777;
+`;
+
+const ResponseFieldLabel = styled.p`
+  color: #333;
+  font-weight: bold;
+`;
+
+const ResponseField = styled.div`
+  padding: 1rem;
+  margin: 1rem 4rem;
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px;
+`;
 
 export default function ViewResponses() {
   const history = useHistory();
@@ -23,14 +49,8 @@ export default function ViewResponses() {
   }, [history.location.search]);
 
   return (
-    <Grid
-      container
-      justify='center'
-      alignItems='center'
-      direction='column'
-      style={{ padding: '2rem', textAlign: 'center', backgroundColor: '#e8e8e8' }}
-    >
-      <h1 style={{ color: '#555' }}>Form Responses</h1>
+    <ResponsesWrapper container justify='center' alignItems='center' direction='column'>
+      <Title>Form Responses</Title>
       <div style={{ display: 'flex', flexDirection: 'column', width: '80%', maxWidth: '50rem' }}>
         {data.map((response, index) => {
           return (
@@ -39,15 +59,14 @@ export default function ViewResponses() {
                 <Typography>{'Response ' + (index + 1)}</Typography>
               </AccordionSummary>
               <AccordionDetails style={{ maxWidth: '40rem', width: '100%', flexDirection: 'column' }}>
-                {response.answers.map((answer) => {
+                {response.answers.map((answer, index) => {
                   return (
-                    <div style={{ padding: '1rem', margin: '1rem 4rem', boxShadow: 'rgba(0, 0, 0, 0.3) 0px 1px 4px' }}>
-                      <p style={{ color: '#333', fontWeight: 'bold' }}>{answer.label}</p>
-                      <p style={{ color: '#777' }}>
+                    <ResponseField key={index}>
+                      <ResponseFieldLabel>{answer.label}</ResponseFieldLabel>
+                      <ResponseFieldAnswer>
                         <strong>Answer:</strong> {answer.answer}
-                      </p>
-                      {/* <Typography style={{ color: '#666' }}>{answer.answer}</Typography> */}
-                    </div>
+                      </ResponseFieldAnswer>
+                    </ResponseField>
                   );
                 })}
               </AccordionDetails>
@@ -55,6 +74,6 @@ export default function ViewResponses() {
           );
         })}
       </div>
-    </Grid>
+    </ResponsesWrapper>
   );
 }

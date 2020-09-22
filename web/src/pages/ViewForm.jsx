@@ -38,7 +38,8 @@ export default function Viewform() {
   const handleSubmit = async (e) => {
     try {
       e.preventDefault();
-      await submitResponse(data.uuid, { answers, signature });
+      console.log(answers);
+      // await submitResponse(data.uuid, { answers, signature });
       setSubmitted(true);
     } catch (err) {
       console.log(err);
