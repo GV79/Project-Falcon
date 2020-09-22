@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
@@ -5,15 +6,10 @@ const compression = require('compression');
 
 const app = express();
 const port = 3030;
-const allowedOrigins = ['http://localhost:3000'];
-
-require('dotenv').config();
-
-if (process.env.NODE_ENV === 'production') {
-  allowedOrigins.push('https://infallible-blackwell-0b463a.netlify.app/');
-}
-
-// if (process.env.NODE_ENNV)
+const allowedOrigins = [
+  'http://localhost:3000',
+  process.env.NODE_ENV === 'production' ? 'https://infallible-blackwell-0b463a.netlify.app' : '',
+];
 
 /* General Middleware */
 app.use(helmet()); // HTTP security configs

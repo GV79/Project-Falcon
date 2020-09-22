@@ -27,24 +27,34 @@ export default function ViewResponses() {
       container
       justify='center'
       alignItems='center'
+      direction='column'
       style={{ padding: '2rem', textAlign: 'center', backgroundColor: '#e8e8e8' }}
     >
       <h1 style={{ color: '#555' }}>Form Responses</h1>
-      {data.map((response, index) => {
-        return (
-          <Accordion key={index}>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='panel1a-content' id='panel1a-header'>
-              <Typography>{'Response ' + (index + 1)}</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Typography>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex, sit amet
-                blandit leo lobortis eget.
-              </Typography>
-            </AccordionDetails>
-          </Accordion>
-        );
-      })}
+      <div style={{ display: 'flex', flexDirection: 'column', width: '80%', maxWidth: '50rem' }}>
+        {data.map((response, index) => {
+          return (
+            <Accordion key={index}>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='panel1a-content' id='panel1a-header'>
+                <Typography>{'Response ' + (index + 1)}</Typography>
+              </AccordionSummary>
+              <AccordionDetails style={{ maxWidth: '40rem', width: '100%', flexDirection: 'column' }}>
+                {response.answers.map((answer) => {
+                  return (
+                    <div style={{ padding: '1rem', margin: '1rem 4rem', boxShadow: 'rgba(0, 0, 0, 0.3) 0px 1px 4px' }}>
+                      <p style={{ color: '#333', fontWeight: 'bold' }}>{answer.label}</p>
+                      <p style={{ color: '#777' }}>
+                        <strong>Answer:</strong> {answer.answer}
+                      </p>
+                      {/* <Typography style={{ color: '#666' }}>{answer.answer}</Typography> */}
+                    </div>
+                  );
+                })}
+              </AccordionDetails>
+            </Accordion>
+          );
+        })}
+      </div>
     </Grid>
   );
 }

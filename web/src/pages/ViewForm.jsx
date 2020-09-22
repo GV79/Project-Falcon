@@ -26,7 +26,7 @@ export default function Viewform() {
       setData(data);
       setAnswers(
         data.fields.map((field) => {
-          return { id: field.id, answer: '' };
+          return { id: field.id, type: field.type, label: field.label, answer: '' };
         })
       );
     })().catch((err) => {
@@ -49,7 +49,7 @@ export default function Viewform() {
     setAnswers(
       answers.map((field) => {
         if (field.id === id) {
-          return { id: field.id, answer: value };
+          return { id: field.id, answer: value, type: field.type, label: field.label };
         } else {
           return field;
         }
@@ -58,10 +58,11 @@ export default function Viewform() {
   };
 
   const handleMultipleChoice = (id, value) => {
+    console.log(value);
     setAnswers(
       answers.map((field) => {
         if (field.id === id) {
-          return { id: field.id, answer: value };
+          return { id: field.id, answer: value, type: field.type, label: field.label };
         } else {
           return field;
         }

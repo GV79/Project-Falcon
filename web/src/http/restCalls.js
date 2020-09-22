@@ -60,7 +60,6 @@ const getResponses = async (id) => {
 
 const submitResponse = async (id, response) => {
   try {
-    console.log('wtfff');
     return await axios.post(config.API_ENDPOINT + '/responses', { formId: id, response });
   } catch (err) {
     console.log(err);
