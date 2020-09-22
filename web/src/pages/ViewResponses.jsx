@@ -69,6 +69,16 @@ export default function ViewResponses() {
                     </ResponseField>
                   );
                 })}
+                {response.signature && (
+                  <Grid container direction='column' justify='center' alignItems='center'>
+                    <p style={{ fontWeight: 'bold', color: '#555' }}>Signature</p>
+                    <img
+                      src={response.signature}
+                      alt={`signature ${index + 1}`}
+                      style={{ width: '320px', height: '150px' }}
+                    />
+                  </Grid>
+                )}
               </AccordionDetails>
             </Accordion>
           );

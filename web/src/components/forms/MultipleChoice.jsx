@@ -3,10 +3,9 @@ import { FormControlLabel, Radio, RadioGroup } from '@material-ui/core';
 
 export default function MultipleChoice({ field, handleMultipleChoice }) {
   const [value, setValue] = useState(field.options[0].value);
-
   const handleChange = (e) => {
     setValue(e.target.value);
-    handleMultipleChoice(field.uuid, e.target.value);
+    handleMultipleChoice(field.id, e.target.value);
   };
 
   return (

@@ -39,7 +39,7 @@ export default function Viewform() {
     try {
       e.preventDefault();
       console.log(answers);
-      // await submitResponse(data.uuid, { answers, signature });
+      await submitResponse(data.uuid, { answers, signature });
       setSubmitted(true);
     } catch (err) {
       console.log(err);
@@ -59,7 +59,6 @@ export default function Viewform() {
   };
 
   const handleMultipleChoice = (id, value) => {
-    console.log(value);
     setAnswers(
       answers.map((field) => {
         if (field.id === id) {
