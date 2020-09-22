@@ -17,7 +17,8 @@ exports.up = (knex) => {
     })
     .createTable('responses', (table) => {
       table.increments('id').primary();
-      table.integer('formId').unsigned().references('id').inTable('forms').onDelete('SET NULL').index();
+      table.string('signature');
+      table.string('formId');
       table.json('answers'); // array containing answers (question id + corresponding user answer)
     });
 };

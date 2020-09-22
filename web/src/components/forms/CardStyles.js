@@ -31,6 +31,7 @@ export const ImageBackdrop = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  text-align: center;
   font-size: 1.5rem;
 `;
 

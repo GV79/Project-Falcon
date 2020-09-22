@@ -22,9 +22,11 @@ app.use(compression());
 /* Importing routers */
 const userRouter = require('../routes/user-route');
 const formRouter = require('../routes/forms-route');
+const responseRouter = require('../routes/responses-route');
 
 app.use('/api/users', userRouter);
 app.use('/api/forms', formRouter);
+app.use('/api/responses', responseRouter);
 
 /* Database Setup w/ knex */
 const { Model } = require('objection');

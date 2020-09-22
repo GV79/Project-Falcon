@@ -4,34 +4,31 @@ import AddFormFieldModal from '../components/modals/AddFormFieldModal';
 import { Checkbox, FormControl, Grid, IconButton, Radio, TextareaAutosize, TextField } from '@material-ui/core';
 import { Field, FormButton, PropertiesGrid } from './EditFormStyles';
 import { selectModal, showAddFormFieldModal } from '../slices/modalSlice';
-import { selectForm, deleteField } from '../slices/formSlice';
+import { selectForm, deleteField, updateFormProperties } from '../slices/formSlice';
 import DeleteIcon from '@material-ui/icons/Delete';
 import SendIcon from '@material-ui/icons/Send';
 import AddIcon from '@material-ui/icons/Add';
+import QuestionAnswerIcon from '@material-ui/icons/QuestionAnswer';
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import PublishIcon from '@material-ui/icons/Publish';
 import { FORM_TYPE, MODAL } from '../constants';
 import { Link, useHistory } from 'react-router-dom';
-import { deleteFormById, getFormById, updateForm } from '../http/restCalls';
+import { deleteFieldById, deleteFormById, getFormById, updateForm } from '../http/restCalls';
 import GenericLoader from '../components/loading/GenericLoader';
 import debounce from 'lodash/debounce';
 import SnackbarFactory from '../components/snackbar/SnackbarFactory';
+import GenericError from '../components/error/GenericError';
 
 export default function EditForm() {
   const dispatch = useDispatch();
-  const form = useSelector(selectForm);
+  const data = useSelector(selectForm); // data for currently focused form
   const modalState = useSelector(selectModal);
   const history = useHistory();
 
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   const [showSavedAlert, setShowSavedAlert] = useState(false);
-  const [data, setData] = useState({
-    title: 'Untitled form',
-    description: '',
-    status: false,
-    uuid: null,
-  });
 
   useEffect(() => {
     const params = history.location.search;
@@ -39,31 +36,35 @@ export default function EditForm() {
 
     (async () => {
       const { data } = await getFormById(id);
-      setData(data);
-      setLoading(false);
+      if (data === '') {
+        setError(true);
+      } else {
+        dispatch(updateFormProperties(data));
+        setLoading(false);
+      }
     })().catch((err) => {
       setLoading(false);
       console.log(err);
     });
-  }, [history.location.search]);
+  }, [dispatch, history.location.search]);
 
   const debouncedFormUpdate = useCallback(
     debounce(async (data, id) => {
       await updateForm(data, id);
       setShowSavedAlert(true);
-    }, 500),
+    }, 650),
     []
   );
 
   const handleTitleChange = (value) => {
     const newData = { ...data, title: value };
-    setData(newData);
+    dispatch(updateFormProperties(newData));
     debouncedFormUpdate(newData, data.uuid);
   };
 
   const handleDescriptionChange = (value) => {
     const newData = { ...data, description: value };
-    setData(newData);
+    dispatch(updateFormProperties(newData));
     debouncedFormUpdate(newData, data.uuid);
   };
 
@@ -76,8 +77,13 @@ export default function EditForm() {
     }
   };
 
-  const handleFieldDeletion = (id) => {
-    dispatch(deleteField(id));
+  const handleFieldDeletion = async (id) => {
+    try {
+      dispatch(deleteField(id));
+      await deleteFieldById(data.uuid, id);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   /* Renders example depending on type of field */
@@ -120,10 +126,14 @@ export default function EditForm() {
   return (
     <>
       {showSavedAlert && <SnackbarFactory message='Changes have been saved' unmount={() => setShowSavedAlert(false)} />}
-      {modalState === MODAL.ADD_FORM_FIELD && <AddFormFieldModal />}
+      {modalState === MODAL.ADD_FORM_FIELD && <AddFormFieldModal showSavedAlert={() => setShowSavedAlert(true)} />}
       <Grid container justify='center'>
         {loading ? (
-          <GenericLoader />
+          error ? (
+            <GenericError />
+          ) : (
+            <GenericLoader />
+          )
         ) : (
           <>
             <PropertiesGrid container type='flex' direction='row'>
@@ -176,9 +186,19 @@ export default function EditForm() {
                     </FormButton>
                   </Link>
                 </Grid>
+                <Link to={`/responses?id=${data.uuid}`} target='_blank' style={{ textDecoration: 'none' }}>
+                  <FormButton
+                    variant='contained'
+                    color='primary'
+                    startIcon={<QuestionAnswerIcon />}
+                    style={{ backgroundColor: '#524db5' }}
+                  >
+                    Responses
+                  </FormButton>
+                </Link>
               </Grid>
             </PropertiesGrid>
-            {form?.fields.map((field, index) => (
+            {data?.fields?.map((field, index) => (
               <Field key={index}>
                 <Checkbox
                   defaultChecked

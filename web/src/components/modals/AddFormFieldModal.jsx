@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { hideModal } from '../../slices/modalSlice';
 import {
   Button,
@@ -12,7 +12,6 @@ import {
   FormControl,
   Grid,
   InputLabel,
-  // makeStyles,
   MenuItem,
   Select,
   TextField,
@@ -20,28 +19,28 @@ import {
 import AddIcon from '@material-ui/icons/Add';
 import MinusIcon from '@material-ui/icons/Remove';
 import { FORM_TYPE } from '../../constants';
-import { addField } from '../../slices/formSlice';
+import { addField, selectForm } from '../../slices/formSlice';
 import { OptionsWrapper } from './AddFormFieldModalStyles';
+import { addFormField } from '../../http/restCalls';
+import { v4 as uuidv4 } from 'uuid';
 
-// const useStyles = makeStyles(() => ({}));
-
-export default function AddFormFieldModal() {
+export default function AddFormFieldModal({ showSavedAlert }) {
   const [open, setOpen] = useState(true);
   const [type, setType] = useState(FORM_TYPE.SINGLE);
   const [label, setLabel] = useState('');
   const [options, setOptions] = useState([
     {
-      id: 1,
+      id: uuidv4(),
       value: '',
     },
     {
-      id: 2,
+      id: uuidv4(),
       value: '',
     },
   ]);
 
+  const data = useSelector(selectForm); // form data
   const dispatch = useDispatch();
-  // const classes = useStyles();
 
   const handleClose = () => {
     setOpen(false);
@@ -50,14 +49,16 @@ export default function AddFormFieldModal() {
     }, 200);
   };
 
-  const handleSubmit = () => {
-    dispatch(
-      addField({
-        type,
-        label,
-        options,
-      })
-    );
+  const handleSubmit = async () => {
+    const field = {
+      id: uuidv4(),
+      type,
+      label,
+      options: type === FORM_TYPE.MULTI ? options : null,
+    };
+    dispatch(addField(field));
+    await addFormField(data, field);
+    showSavedAlert();
     handleClose();
   };
 
@@ -66,8 +67,11 @@ export default function AddFormFieldModal() {
 
     if (type === FORM_TYPE.MULTI) {
       if (options.length < 2) return false;
+      let set = new Set();
       for (let option of options) {
         if (option.value.length === 0) return false;
+        if (set.has(option.value)) return false;
+        set.add(option.value);
       }
     }
 

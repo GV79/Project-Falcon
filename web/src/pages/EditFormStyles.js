@@ -24,7 +24,7 @@ export const Field = styled.div`
 `;
 
 export const PropertiesGrid = styled(Grid)`
-  background-color: #e8e8e8;
+  background-color: #f8f8f8;
   box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.141), 0 1px 3px 0 rgba(0, 0, 0, 0.122);
   padding: 2rem;
   margin-bottom: 2rem;
