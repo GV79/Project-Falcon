@@ -7,6 +7,14 @@ const app = express();
 const port = 3030;
 const allowedOrigins = ['http://localhost:3000'];
 
+require('dotenv').config();
+
+if (process.env.NODE_ENV === 'production') {
+  allowedOrigins.push('https://infallible-blackwell-0b463a.netlify.app/');
+}
+
+// if (process.env.NODE_ENNV)
+
 /* General Middleware */
 app.use(helmet()); // HTTP security configs
 app.use(
@@ -31,7 +39,6 @@ app.use('/api/responses', responseRouter);
 /* Database Setup w/ knex */
 const { Model } = require('objection');
 const Knex = require('knex');
-require('dotenv').config();
 
 const knex = Knex({
   client: 'postgresql',
